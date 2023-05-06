@@ -1,0 +1,35 @@
+#################################################
+How to Install Nexus Repository Manager on Ubuntu
+#################################################
+
+part1) Installing Java OpenJDK 8
+
+	sudo apt update
+	sudo apt install openjdk-8-jdk
+	java -version
+if you need to change your java version use this commands ifnot so jump to part2
+	sudo update-alternatives --config java
+	sudo vim ~/.bashrc
+    # Add the below line in ~/.bashrc
+	export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:/bin/java::")
+	source ~/.bashrc	
+
+part2) install nexus
+	sudo useradd -d /opt/nexus -s /bin/bash nexus
+	sudo passwd nexus
+	ulimit -n 65536
+    # write this in the file nexus.conf : nexus - nofile 65536
+	sudo nano /etc/security/limits.d/nexus.conf
+	wget https://download.sonatype.com/nexus/3/nexus-3.41.1-01-unix.tar.gz
+	tar xzf nexus-3.41.1-01-unix.tar.gz
+	mv nexus-3.41.1-01 /opt/nexus
+	mv sonatype-work /opt/
+	chown -R nexus:nexus /opt/nexus /opt/sonatype-work
+    # type nexus in "" --> run_as_user="nexus"
+	sudo nano /opt/nexus/bin/nexus.rc
+	sudo nano /opt/nexus/bin/nexus.vmoptions
+    #-Xms1024m
+    #-Xmx1024m
+    #-XX:MaxDirectMemorySize=1024m 
+	sudo nano /opt/sonatype-work/nexus3/etc/nexus.properties
+    #application-host=127.0.0.1
